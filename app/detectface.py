@@ -24,17 +24,19 @@ search = [f for f in listdir(pathSearch) if isfile(join(pathSearch, f))]
 
 encodings_conocidos = []
 nombres_conocidos = []
-
+print("Analizando imagenes... " + str(len(database)) + " encontradas.")
 for data in database:
      imagen_data = face_recognition.load_image_file(pathDatabase + data)
-     data_encoding = face_recognition.face_encodings(imagen_data)[0]
-     encodings_conocidos.append(data_encoding)
-     nombres_conocidos.append(data)
+     if len(face_recognition.face_encodings(imagen_data)) > 0:
+          data_encoding = face_recognition.face_encodings(imagen_data)[0]
+          encodings_conocidos.append(data_encoding)
+          nombres_conocidos.append(data)
+     print(str(database.index(data)) + " de " + str(len(database)) + " > " + pathDatabase + data)
  
 #Cargamos una fuente de texto:
 font = cv2.FONT_HERSHEY_COMPLEX
- 
- 
+
+print("Comprobando rostros... ")
 for imgName in search:
      img = pathSearch + imgName
      img = face_recognition.load_image_file(img)
@@ -52,7 +54,8 @@ for imgName in search:
      #Recorremos el array de encodings que hemos encontrado:
      eliminar = True
      for encoding in encodings_rostros:
-     
+          print(str(encodings_rostros.index(encoding)) + " de " + str(len(encodings_rostros)))
+
           #Buscamos si hay alguna coincidencia con algún encoding conocido:
           coincidencias = face_recognition.compare_faces(encodings_conocidos, encoding)
           
@@ -89,7 +92,7 @@ for imgName in search:
           cv2.putText(img, nombre, (left, bottom - 6), font, 0.6, (0,0,0), 1)
      
      #Abrimos una ventana con el resultado:
-     cv2.imshow('Output', img)
+     #cv2.imshow('Output', img)
      #cv2.waitKey(200)
      cv2.destroyAllWindows()
      if eliminar:
